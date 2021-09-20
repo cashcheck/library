@@ -1,0 +1,62 @@
+<html>
+<head>
+  <title>Library App</title>
+  <meta charset="UTF-8"/>
+  <link rel='stylesheet' href='style.css'>
+</head>
+<body>
+<h1>Library</h1>
+
+<div id='display'></div>
+
+</body>
+
+<script>
+
+//empty array where books are stored
+
+let myLibrary = []
+
+//function which pushes book object into array
+
+function addBook(book) {
+myLibrary.push(book);
+}
+
+//object constructor which creates a book object
+
+function Book(title,author,pages,read) {
+    this.title = title
+    this.author = author
+    this.pages = pages
+    this.read = read
+}
+
+//book functions added to prototype to help constructor run faster
+
+Book.prototype.info = function() {
+  return `${this.title} by ${this.author}, ${this.pages} pages long, ${this.read}`;
+}
+
+const theHobbit = new Book('The Hobbit', 'J.R.R. Tolkien', 310, true);
+const theFountainhead = new Book('The Fountainhead', 'Ayn Rand', 753, true);
+
+addBook(theHobbit);
+addBook(theFountainhead);
+
+//loop through array and display books
+
+myLibrary.forEach(function(book) {
+
+const bookDisplay = document.querySelector('#display');
+const newDiv = document.createElement('div');
+newDiv.classList.add('book');
+
+newDiv.textContent = `${book.info()}`
+
+bookDisplay.appendChild(newDiv);
+
+})
+
+</script>
+</html>
