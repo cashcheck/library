@@ -5,9 +5,45 @@
   <link rel='stylesheet' href='style.css'>
 </head>
 <body>
-<h1>Library</h1>
+<h1>myLibrary</h1>
+<h3 id='byMe'>by Hieu Nguyen</h3>
+<p id='description'>A html and javascript library that I created as part of the Odin Project's javascript course.
+  The aim of this project was to demonstrate knowledge of object constructors and prototypes. 
+  credit to w3schools for the code used in the popup modal and the sliders.
+</p>
 
-<div id='display'></div>
+<table>
+<tr>
+  <th>Title</th>
+  <th>Author</th>
+  <th>Pages</th>
+  <th>Status</th>
+</tr>
+</table>
+
+<button id='add'>Add Book</button>
+
+<div class='modal'>
+
+  <div class='modalContent'>
+    <span class="close">&times;</span>
+    <h2>Add Book</h2>
+    <form action='#' method='POST'>
+      <label>Title</label>
+      <input type='text' id='bookTitle'>
+      <label>Author</label>
+      <input type='text' id='bookAuthor'>
+      <label>Page Count</label>
+      <input type='text' id='bookPage'>
+      <label>Read Status</label>
+      <label class="switch">
+        <input type="checkbox">
+        <span class="slider round"></span>
+      </label>
+      <input type=submit>
+    </form>
+  </div>
+</div>
 
 </body>
 
@@ -38,6 +74,17 @@ Book.prototype.info = function() {
   return `${this.title} by ${this.author}, ${this.pages} pages long, ${this.read}`;
 }
 
+//function toggles the read  status of the book
+
+Book.prototype.readStatus = function() {
+  if (this.read == true) {
+    this.read = false;
+  }
+  else {
+    this.read = true;
+  }
+}
+
 const theHobbit = new Book('The Hobbit', 'J.R.R. Tolkien', 310, true);
 const theFountainhead = new Book('The Fountainhead', 'Ayn Rand', 753, true);
 
@@ -46,17 +93,141 @@ addBook(theFountainhead);
 
 //loop through array and display books
 
-myLibrary.forEach(function(book) {
+const addBookDisplay = function(book) {
 
-const bookDisplay = document.querySelector('#display');
-const newDiv = document.createElement('div');
-newDiv.classList.add('book');
+const bookDisplay = document.querySelector('table');
+const newRow = document.createElement('tr');
 
-newDiv.textContent = `${book.info()}`
 
-bookDisplay.appendChild(newDiv);
+//adds title to table
+const title = document.createElement('td')
+title.textContent = book.title;
+newRow.appendChild(title);
+
+//adds author to table
+const author = document.createElement('td')
+author.textContent = book.author;
+newRow.appendChild(author);
+
+//adds page count to table
+const pages = document.createElement('td')
+pages.textContent = book.pages;
+newRow.appendChild(pages);
+
+//adds read or not to table
+const read = document.createElement('td');
+const button = document.createElement('button');
+
+button.addEventListener('click', function() {
+
+book.readStatus();
+console.log(book)
+
+if (book.read == true) {
+  button.textContent = 'Read'
+}
+
+else {
+  button.textContent = 'Not read'
+}
 
 })
+
+if (book.read == true) {
+  button.textContent = 'Read'
+}
+
+else {
+  button.textContent = 'Not read'
+}
+
+read.appendChild(button);
+
+newRow.appendChild(read);
+
+//adds delete button
+
+const deleteButtontd = document.createElement('td')
+const deleteButton = document.createElement('button');
+deleteButton.classList.add('deleteButton');
+deleteButton.textContent = 'Delete';
+
+deleteButton.addEventListener('click', function() {
+
+//removes row from display table 
+  
+  deleteButtontd.parentNode.remove();
+
+//removes book object from myLibrary array
+
+  const bookIndex = myLibrary.findIndex(function(e) {
+  if (e === book) {
+    return true
+  }
+  })
+
+  myLibrary.splice(bookIndex, bookIndex + 1);
+
+})
+
+deleteButtontd.appendChild(deleteButton);
+newRow.appendChild(deleteButtontd);
+
+//appends row to the display
+
+bookDisplay.appendChild(newRow);
+
+}
+
+myLibrary.forEach(addBookDisplay);
+
+//pop up modal
+
+let addButton = document.querySelector('#add')
+let modal = document.querySelector('.modal')
+let span = document.querySelector('.close')
+
+addButton.addEventListener('click', function(e) {
+  modal.style.display = 'block';
+})
+
+span.addEventListener('click', function(e) {
+  modal.style.display = 'none'
+})
+
+window.addEventListener('click', function() {
+  if (event.target == modal) {
+    modal.style.display = 'none';
+  }
+})
+
+//add new book
+
+const formData = document.querySelector('form');
+
+formData.addEventListener('submit', function(e) {
+
+e.preventDefault()
+
+const bookTitle = formData.querySelector('#bookTitle').value
+const bookAuthor = formData.querySelector('#bookAuthor').value
+const bookPage = formData.querySelector('#bookPage').value
+const bookRead = formData.querySelector(`input[type='checkbox']`).value
+
+console.log(bookRead);
+
+const newBook = new Book(bookTitle, bookAuthor, bookPage, true);
+
+addBook(newBook);
+
+addBookDisplay(newBook);
+
+formData.reset();
+
+modal.style.display = 'none';
+
+})
+
 
 </script>
 </html>
